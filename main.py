@@ -1,11 +1,10 @@
-from datetime import datetime
+import datetime
 from typing import Optional
 from fastapi import FastAPI, Query, Path
 from connect import Settings
 import uvicorn
 import requests
 import enum
-import socket
 
 settings = Settings()
 
