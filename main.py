@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from fastapi import FastAPI, Query, Path
 from connect import Settings
@@ -67,6 +68,66 @@ async def get_all_chart(
         return [await fetch_data(f'http://{ip}:8080{endpoint}') for ip in ip_list.values()]
 
     # Запрос данных с конкретной локации
+    ip = ip_list.get(location.value)
+    return await fetch_data(f'http://{ip}:8080{endpoint}')
+
+
+@app.get("/{location}/data/chart/last/all/", tags=['all inv last data'])
+async def read_last_data(location: Location):
+    endpoint = '/data/chart/last/all/'
+
+    if location == Location.ALL:
+        # Запрос данных со всех IP
+        return [await fetch_data(f'http://{ip}:8080{endpoint}') for ip in ip_list.values()]
+
+        # Запрос данных с конкретной локации
+    ip = ip_list.get(location.value)
+    return await fetch_data(f'http://{ip}:8080{endpoint}')
+
+
+@app.get("/{location}/data/chart/year/all/{year}", tags=['all inv chart'])
+async def data_chart_for_year_all_inverters(location: Location,
+                                            year: int = Path(..., ge=2000, le=2100, description="Год в формате ГГГГ")):
+    endpoint = f'/data/chart/year/all/{year}'
+
+    if location == Location.ALL:
+        # Запрос данных со всех IP
+        return [await fetch_data(f'http://{ip}:8080{endpoint}') for ip in ip_list.values()]
+
+        # Запрос данных с конкретной локации
+    ip = ip_list.get(location.value)
+    return await fetch_data(f'http://{ip}:8080{endpoint}')
+
+
+@app.get("/{location}/data/chart/month/all/{year}/{month}", tags=['all inv chart'])
+async def data_chart_for_month_all_inverters(
+        location: Location,
+        year: int = Path(..., ge=2000, le=2100, description="Год в формате ГГГГ"),
+        month: int = Path(..., ge=1, le=12, description="Месяц в формате ММ")):
+    endpoint = f'/data/chart/month/all/{year}/{month:02d}'
+
+    if location == Location.ALL:
+        # Запрос данных со всех IP
+        return [await fetch_data(f'http://{ip}:8080{endpoint}') for ip in ip_list.values()]
+
+        # Запрос данных с конкретной локации
+    ip = ip_list.get(location.value)
+    return await fetch_data(f'http://{ip}:8080{endpoint}')
+
+
+@app.get("/{location}/data/chart/day/all/{target_date}",
+         summary="Ручка для получения всех данных за target_date, со всех инверторов",
+         tags=['all inv chart'])
+async def data_chart_for_day_all_inverters(location: Location,
+                                           target_date: datetime.date = Path(...,
+                                                                             description="Дата в формате ГГГГ-ММ-ДД")):
+    endpoint = f'/data/chart/day/all/{target_date}'
+
+    if location == Location.ALL:
+        # Запрос данных со всех IP
+        return [await fetch_data(f'http://{ip}:8080{endpoint}') for ip in ip_list.values()]
+
+        # Запрос данных с конкретной локации
     ip = ip_list.get(location.value)
     return await fetch_data(f'http://{ip}:8080{endpoint}')
 
