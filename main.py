@@ -24,16 +24,6 @@ class Location(enum.Enum):
     ALL = 'ALL'
 
 
-def get_local_ip() -> str:
-    """Получение локального IP-адреса."""
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as temp_socket:
-            temp_socket.connect(("8.8.8.8", 80))
-            return temp_socket.getsockname()[0]
-    except socket.error:
-        return "127.0.0.1"
-
-
 app = FastAPI()
 
 
@@ -82,4 +72,4 @@ async def get_all_chart(
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", host=get_local_ip(), port=8080, reload=True)
+    uvicorn.run("main:app", host='0.0.0.0', port=8080, reload=True)
