@@ -5,6 +5,7 @@ from connect import Settings
 import uvicorn
 import requests
 import enum
+from fastapi.middleware.cors import CORSMiddleware
 
 settings = Settings()
 
@@ -25,6 +26,16 @@ class Location(enum.Enum):
 
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 async def fetch_data(url: str) -> dict:
